@@ -1,5 +1,6 @@
 package com.fustigatedcat.metricize.api.controller
 
+import com.fustigatedcat.metricize.api.model.Customer
 import spray.http.MediaTypes._
 import spray.routing.HttpService
 
@@ -9,14 +10,18 @@ import spray.httpx.SprayJsonSupport._
 
 trait CustomerController extends HttpService { this: Auth =>
 
+  def getCustomer(customer : Customer) = respondWithMediaType(`application/json`) {
+    complete {
+      marshal(customer)
+    }
+  }
+
   val customerRoutes = pathPrefix("api") {
-    authenticate(validateToken) { customer =>
-      pathPrefix("customer") {
-        get {
-          respondWithMediaType(`application/json`) {
-            complete {
-              marshal(customer)
-            }
+    pathPrefix("customers" / "me") {
+      pathEnd {
+        authenticate(validateCustomer) { customer =>
+          get {
+            getCustomer(customer)
           }
         }
       }

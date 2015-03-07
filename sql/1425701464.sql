@@ -1,0 +1,9 @@
+USE metricize;
+
+CREATE TABLE Agent (
+  agent_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  customer_id INT UNSIGNED NOT NULL,
+  name VARCHAR(64) NOT NULL DEFAULT '',
+  agent_key VARCHAR(4096) NOT NULL DEFAULT '',
+  PRIMARY KEY (agent_id)
+) ENGINE=INNODB;
