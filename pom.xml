@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- The Basics -->
+  <groupId>com.fustigatedcat.metricize.api</groupId>
+  <artifactId>api</artifactId>
+  <version>0.1</version>
+  <packaging>jar</packaging>
+  <name>metricize_api</name>
+  <description>The API for metricize</description>
+  <url></url>
+  <inceptionYear>2015</inceptionYear>
+  <developers>
+      <developer>
+          <id>jbackfield</id>
+          <name>Josh Backfield</name>
+          <email>jbackfield@gmail.com</email>
+          <url />
+          <roles>
+              <role>architect</role>
+              <role>developer</role>
+          </roles>
+          <timezone>America/New_York</timezone>
+          <properties>
+              <picUrl />
+          </properties>
+      </developer>
+  </developers>
+
+  <properties>
+      <scala.maj.version>2.11</scala.maj.version>
+      <scala.version>${scala.maj.version}.6</scala.version>
+      <spray.version>1.3.2</spray.version>
+      <spray.json.version>1.3.1</spray.json.version>
+      <akka.version>2.3.9</akka.version>
+      <slick.version>3.0.0-RC1</slick.version>
+  </properties>
+
+  <dependencies>
+      <dependency>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+          <version>${scala.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>io.spray</groupId>
+          <artifactId>spray-servlet_${scala.maj.version}</artifactId>
+          <version>${spray.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>io.spray</groupId>
+          <artifactId>spray-routing_${scala.maj.version}</artifactId>
+          <version>${spray.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>io.spray</groupId>
+          <artifactId>spray-json_${scala.maj.version}</artifactId>
+          <version>${spray.json.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.typesafe.akka</groupId>
+          <artifactId>akka-actor_${scala.maj.version}</artifactId>
+          <version>${akka.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+          <version>1.1.2</version>
+      </dependency>
+      <dependency>
+          <groupId>com.typesafe.slick</groupId>
+          <artifactId>slick_${scala.maj.version}</artifactId>
+          <version>${slick.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>5.1.26</version>
+      </dependency>
+  </dependencies>
+
+  <!-- Build Settings -->
+  <build>
+  </build>
+
+</project>

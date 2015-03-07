@@ -1,0 +1,12 @@
+DROP DATABASE metricize;
+
+CREATE DATABASE metricize;
+
+USE metricize;
+
+CREATE TABLE Customer (
+  customer_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(64) NOT NULL DEFAULT '',
+  customer_key VARCHAR(4096) NOT NULL DEFAULT '',
+  PRIMARY KEY (customer_id)
+) ENGINE=INNODB;
