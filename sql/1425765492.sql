@@ -1,0 +1,13 @@
+USE metricize;
+
+ALTER TABLE Agent ADD COLUMN agent_type ENUM('NONE', 'MYSQL', 'REST', 'LOG') NOT NULL DEFAULT 'NONE';
+
+CREATE TABLE MYSQLAgentConfig (
+  mysql_agent_config_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  agent_id INT UNSIGNED NOT NULL,
+  username VARCHAR(256) NOT NULL DEFAULT '',
+  password VARCHAR(256) NOT NULL DEFAULT '',
+  fqdn VARCHAR(256) NOT NULL DEFAULT '',
+  port INT NOT NULL DEFAULT 3306,
+  PRIMARY KEY (mysql_agent_config_id)
+);

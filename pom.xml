@@ -8,7 +8,7 @@
   <groupId>com.fustigatedcat.metricize.api</groupId>
   <artifactId>api</artifactId>
   <version>0.1</version>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <name>metricize_api</name>
   <description>The API for metricize</description>
   <url></url>
@@ -37,6 +37,7 @@
       <spray.json.version>1.3.1</spray.json.version>
       <akka.version>2.3.9</akka.version>
       <slick.version>2.1.0</slick.version>
+      <json4s.version>3.2.11</json4s.version>
   </properties>
 
   <dependencies>
@@ -56,9 +57,9 @@
           <version>${spray.version}</version>
       </dependency>
       <dependency>
-          <groupId>io.spray</groupId>
-          <artifactId>spray-json_${scala.maj.version}</artifactId>
-          <version>${spray.json.version}</version>
+          <groupId>org.json4s</groupId>
+          <artifactId>json4s-native_${scala.maj.version}</artifactId>
+          <version>${json4s.version}</version>
       </dependency>
       <dependency>
           <groupId>com.typesafe.akka</groupId>
@@ -79,6 +80,11 @@
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
           <version>5.1.26</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+          <version>3.3.2</version>
       </dependency>
   </dependencies>
 
