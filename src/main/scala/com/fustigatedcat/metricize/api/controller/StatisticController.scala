@@ -1,5 +1,9 @@
 package com.fustigatedcat.metricize.api.controller
 
+import com.fustigatedcat.metricize.api.ActorSystems
+import org.json4s.JObject
+import org.json4s._
+import spray.http.StatusCodes
 import spray.httpx.Json4sSupport
 import spray.routing.HttpService
 
@@ -11,9 +15,19 @@ trait StatisticController extends HttpService { this: Auth with Json4sSupport =>
     pathPrefix("statistics") {
       authenticate(validateAgent) { agent =>
         post {
-          respondWithMediaType(`application/json`) {
-            complete {
-              ("status" -> "ok")
+          entity(as[JObject]) { req =>
+            respondWithMediaType(`application/json`) { ctx =>
+              (
+                (req \ "date").extractOpt[Long],
+                (req \ "md5").extractOpt[String],
+                (req \ "msg").extractOpt[String]
+              ) match {
+                case (Some(_), Some(_), Some(_)) => {
+                  ActorSystems.inputStatisticProcessor !(agent, req)
+                  ctx.complete(StatusCodes.Accepted)
+                }
+                case _ => ctx.complete(StatusCodes.BadRequest)
+              }
             }
           }
         }

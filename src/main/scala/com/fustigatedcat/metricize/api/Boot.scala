@@ -8,7 +8,7 @@ import spray.servlet.WebBoot
 // the spray.servlet.WebBoot trait
 class Boot extends WebBoot {
 
-  val system = ActorSystem("example")
+  val system = ActorSystems.webActorSystem
 
   // the service actor replies to incoming HttpRequests
   val serviceActor = system.actorOf(Props[MyServiceActor])
