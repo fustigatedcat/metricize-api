@@ -8,7 +8,12 @@ import scala.slick.driver.MySQLDriver.simple._
 
 object CoreDB {
 
-  val db = Database.forURL("jdbc:mysql://localhost:3306/metricize", user = "root", password = "", driver="com.mysql.jdbc.Driver")
+  val db = Database.forURL(
+    Configuration.database.core.jdbc.url,
+    user = Configuration.database.core.username,
+    password = Configuration.database.core.password,
+    driver = Configuration.database.core.jdbc.driver
+  )
 
   val customers = TableQuery[Customers]
 
