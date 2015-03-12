@@ -21,18 +21,20 @@ object AgentDAO {
     mysqlagentconfigs.filter(_.agentId === id).firstOption
   }
 
+  implicit def mysqlConfigToJValue(config : Option[MYSQLAgentConfig]) : JValue = config match {
+    case Some(mysqlConfig) => {
+      ("mysqlAgentConfigId" -> mysqlConfig.mysqlAgentConfigId) ~
+        ("fqdn" -> mysqlConfig.fqdn) ~
+        ("port" -> mysqlConfig.port) ~
+        ("username" -> mysqlConfig.username) ~
+        ("password" -> mysqlConfig.password)
+    }
+    case _ => JObject()
+  }
+
   val agentConfigs : Map[Symbol, Long => JValue] = Map(
     'NONE -> (id => JObject()),
-    'MYSQL -> (id =>  getMysqlConfig(id) match {
-      case Some(mysqlConfig) => {
-        ("mysqlAgentConfigId" -> mysqlConfig.mysqlAgentConfigId) ~
-          ("fqdn" -> mysqlConfig.fqdn) ~
-          ("port" -> mysqlConfig.port) ~
-          ("username" -> mysqlConfig.username) ~
-          ("password" -> mysqlConfig.password)
-      }
-      case _ => JObject()
-    })
+    'MYSQL -> (id => getMysqlConfig(id))
   )
 
   implicit def agentToJValue(agent : Agent) : JValue = DB.db.withSession { implicit session =>
