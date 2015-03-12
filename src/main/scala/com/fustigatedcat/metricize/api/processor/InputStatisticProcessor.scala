@@ -1,23 +1,20 @@
 package com.fustigatedcat.metricize.api.processor
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-import java.security.MessageDigest
-import java.util._
 import java.util.zip.{GZIPInputStream, Inflater}
 
 import akka.actor.Actor
+import akka.camel.CamelMessage
 import com.fustigatedcat.metricize.api.ActorSystems
 import com.fustigatedcat.metricize.api.model.Agent
+import org.apache.commons.codec.binary.Base64
 import org.apache.commons.codec.digest.DigestUtils
 import org.json4s.JObject
 import org.json4s.DefaultFormats
-import org.json4s.native.JsonMethods._
 
 class InputStatisticProcessor extends Actor {
 
   implicit val formats = DefaultFormats
-
-  val base64Decoder = Base64.getDecoder
 
   def readInflater(inflater : GZIPInputStream, stream : ByteArrayOutputStream) : Array[Byte] = {
     val tmp = new Array[Byte](100)
@@ -34,7 +31,7 @@ class InputStatisticProcessor extends Actor {
   }
 
   def extractAndInflate(msg : String) : String = {
-    val bytes = base64Decoder.decode(msg)
+    val bytes = Base64.decodeBase64(msg)
     val out = readInflater(new GZIPInputStream(new ByteArrayInputStream(bytes)), new ByteArrayOutputStream())
     new String(out, "UTF-8")
   }
@@ -47,9 +44,9 @@ class InputStatisticProcessor extends Actor {
     case (agent : Agent, input : JObject) => {
       val orig = extractAndInflate((input \ "msg").extract[String])
       if(MD5Valid_?(orig, (input \ "md5").extract[String])) {
-        ActorSystems.edgeQueue ! orig
+        ActorSystems.edgeQueue ! CamelMessage(orig, Map("agent-id" -> agent.id.get, "agent-type" -> agent.agentType.get))
       } else {
-        ActorSystems.invalidEdgeQueue ! orig
+        ActorSystems.invalidEdgeQueue ! CamelMessage(orig, Map("agent-id" -> agent.id.get, "agent-type" -> agent.agentType.get))
       }
     }
     case _ => println("Invalid statistic")
