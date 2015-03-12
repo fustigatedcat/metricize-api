@@ -1,6 +1,6 @@
 package com.fustigatedcat.metricize.api.database.core
 
-import com.fustigatedcat.metricize.api.model.{Customer, MYSQLAgentConfigs, Agents, Agent}
+import com.fustigatedcat.metricize.api.model._
 import org.apache.commons.lang3.RandomStringUtils
 import org.json4s._
 import org.json4s.JsonDSL._
@@ -17,6 +17,24 @@ object AgentDAO {
     agents.filter(_.agentKey === key.value).firstOption
   }
 
+  def getMysqlConfig(id : Long) : Option[MYSQLAgentConfig] = DB.db.withSession { implicit session =>
+    mysqlagentconfigs.filter(_.agentId === id).firstOption
+  }
+
+  val agentConfigs : Map[Symbol, Long => JValue] = Map(
+    'NONE -> (id => JObject()),
+    'MYSQL -> (id =>  getMysqlConfig(id) match {
+      case Some(mysqlConfig) => {
+        ("mysqlAgentConfigId" -> mysqlConfig.mysqlAgentConfigId) ~
+          ("fqdn" -> mysqlConfig.fqdn) ~
+          ("port" -> mysqlConfig.port) ~
+          ("username" -> mysqlConfig.username) ~
+          ("password" -> mysqlConfig.password)
+      }
+      case _ => JObject()
+    })
+  )
+
   implicit def agentToJValue(agent : Agent) : JValue = DB.db.withSession { implicit session =>
     mysqlagentconfigs.filter(_.agentId === agent.id).firstOption match {
       case Some(mysqlConfig) => {
@@ -25,13 +43,7 @@ object AgentDAO {
           ("name" -> agent.name) ~
           ("agentKey" -> agent.agentKey) ~
           ("agentType" -> agent.agentType) ~
-          ("config" ->
-            ("mysqlAgentConfigId" -> mysqlConfig.mysqlAgentConfigId) ~
-              ("fqdn" -> mysqlConfig.fqdn) ~
-              ("port" -> mysqlConfig.port) ~
-              ("username" -> mysqlConfig.username) ~
-              ("password" -> mysqlConfig.password)
-            )
+          ("config" -> agentConfigs(Symbol(agent.agentType.getOrElse("NONE")))(agent.id.get))
       }
     }
   }

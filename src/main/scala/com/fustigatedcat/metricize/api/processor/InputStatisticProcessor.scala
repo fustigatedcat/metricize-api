@@ -1,7 +1,7 @@
 package com.fustigatedcat.metricize.api.processor
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-import java.util.zip.{GZIPInputStream, Inflater}
+import java.util.zip.GZIPInputStream
 
 import akka.actor.Actor
 import akka.camel.CamelMessage
