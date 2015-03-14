@@ -31,7 +31,7 @@ trait AgentController extends HttpService { this: Auth with Json4sSupport =>
           get {
             respondWithMediaType(`application/json`) {
               complete {
-                agent : JValue
+                agentToJValue(agent)
               }
             }
           }

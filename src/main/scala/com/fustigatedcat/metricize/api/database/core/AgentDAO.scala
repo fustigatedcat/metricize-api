@@ -17,11 +17,11 @@ object AgentDAO {
     agents.filter(_.agentKey === key.value).firstOption
   }
 
-  def getMysqlConfig(id : Long) : Option[MYSQLAgentConfig] = DB.db.withSession { implicit session =>
+  def getMysqlConfig(id : Long)(implicit session : Session) : Option[MYSQLAgentConfig] = {
     mysqlagentconfigs.filter(_.agentId === id).firstOption
   }
 
-  implicit def mysqlConfigToJValue(config : Option[MYSQLAgentConfig]) : JValue = config match {
+  def mysqlConfigToJValue(config : Option[MYSQLAgentConfig]) : JValue = config match {
     case Some(mysqlConfig) => {
       ("mysqlAgentConfigId" -> mysqlConfig.mysqlAgentConfigId) ~
         ("fqdn" -> mysqlConfig.fqdn) ~
@@ -32,22 +32,18 @@ object AgentDAO {
     case _ => JObject()
   }
 
-  val agentConfigs : Map[Symbol, Long => JValue] = Map(
-    'NONE -> (id => JObject()),
-    'MYSQL -> (id => getMysqlConfig(id))
+  val agentConfigs : Map[Symbol, (Long, Session) => JValue] = Map(
+    'NONE -> ((id, session) => JObject()),
+    'MYSQL -> ((id, session) => mysqlConfigToJValue(getMysqlConfig(id)(session)))
   )
 
-  implicit def agentToJValue(agent : Agent) : JValue = DB.db.withSession { implicit session =>
-    mysqlagentconfigs.filter(_.agentId === agent.id).firstOption match {
-      case Some(mysqlConfig) => {
-        ("id" -> agent.id) ~
-          ("customerId" -> agent.customerId) ~
-          ("name" -> agent.name) ~
-          ("agentKey" -> agent.agentKey) ~
-          ("agentType" -> agent.agentType) ~
-          ("config" -> agentConfigs(Symbol(agent.agentType.getOrElse("NONE")))(agent.id.get))
-      }
-    }
+  def agentToJValue(agent : Agent) : JValue = DB.db.withSession { implicit session =>
+    ("id" -> agent.id) ~
+      ("customerId" -> agent.customerId) ~
+      ("name" -> agent.name) ~
+      ("agentKey" -> agent.agentKey) ~
+      ("agentType" -> agent.agentType) ~
+      ("config" -> agentConfigs(Symbol(agent.agentType.getOrElse("NONE")))(agent.id.get, session))
   }
 
   def createAgent(customer : Customer, name : String) = DB.db.withSession { implicit session =>
