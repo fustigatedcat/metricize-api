@@ -20,11 +20,11 @@ object Configuration {
   }
 
   object queue {
-    object core {
-      val addresses = config.getConfigList("queue.core.addresses").map(c => (c.getString("hostname"), c.getInt("port"))).toList
-      val username = config.getString("queue.core.username")
-      val password = config.getString("queue.core.password")
-      val virtualhost = config.getString("queue.core.virtualhost")
+    object edge {
+      val url = config.getString("queue.edge.url")
+    }
+    object invalidedge {
+      val url = config.getString("queue.invalidedge.url")
     }
 
   }
