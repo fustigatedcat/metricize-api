@@ -28,7 +28,9 @@ object AgentDAO {
         ("port" -> mysqlConfig.port) ~
         ("username" -> mysqlConfig.username) ~
         ("password" -> mysqlConfig.password) ~
-        ("queryString" -> mysqlConfig.queryString)
+        ("queryString" -> mysqlConfig.queryString) ~
+        ("countPer" -> mysqlConfig.countPer) ~
+        ("timeUnit" -> mysqlConfig.timeUnit)
     }
     case _ => JObject()
   }
