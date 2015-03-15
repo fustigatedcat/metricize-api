@@ -2,7 +2,7 @@ package com.fustigatedcat.metricize.api.model
 
 import slick.driver.MySQLDriver.simple._
 
-case class MYSQLAgentConfig(mysqlAgentConfigId : Option[Long], agentId : Long, username : String, password : String, fqdn : String, port : Int)
+case class MYSQLAgentConfig(mysqlAgentConfigId : Option[Long], agentId : Long, username : String, password : String, fqdn : String, port : Int, queryString : String)
 
 class MYSQLAgentConfigs(tag : Tag) extends Table[MYSQLAgentConfig](tag, "MYSQLAgentConfig") {
   def mysqlAgentConfigId = column[Long]("mysql_agent_config_id", O.PrimaryKey, O.AutoInc)
@@ -11,6 +11,7 @@ class MYSQLAgentConfigs(tag : Tag) extends Table[MYSQLAgentConfig](tag, "MYSQLAg
   def password = column[String]("password")
   def fqdn = column[String]("fqdn")
   def port = column[Int]("port")
+  def queryString = column[String]("query_string")
 
-  def * = (mysqlAgentConfigId.?, agentId, username, password, fqdn, port) <> (MYSQLAgentConfig.tupled, MYSQLAgentConfig.unapply)
+  def * = (mysqlAgentConfigId.?, agentId, username, password, fqdn, port, queryString) <> (MYSQLAgentConfig.tupled, MYSQLAgentConfig.unapply)
 }
