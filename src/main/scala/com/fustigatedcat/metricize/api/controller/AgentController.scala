@@ -9,30 +9,28 @@ import spray.routing.HttpService
 
 trait AgentController extends HttpService { this: Auth with Json4sSupport =>
 
-  val agentRoutes = pathPrefix("api") {
-    pathPrefix("agents") {
-      pathEnd {
-        authenticate(validateCustomer) { customer =>
-          post {
-            entity(as[JObject]) { body =>
-              respondWithMediaType(`application/json`) {
-                complete {
-                  AgentDAO.createAgent(customer, (body \ "name").extract[String])
-                }
+  val agentRoutes = pathPrefix("agents") {
+    pathEnd {
+      authenticate(validateCustomer) { customer =>
+        post {
+          entity(as[JObject]) { body =>
+            respondWithMediaType(`application/json`) {
+              complete {
+                AgentDAO.createAgent(customer, (body \ "name").extract[String])
               }
             }
           }
         }
       }
-    } ~
-    pathPrefix("agents" / "me") {
-      pathEnd {
-        authenticate(validateAgent) { agent =>
-          get {
-            respondWithMediaType(`application/json`) {
-              complete {
-                agentToJValue(agent)
-              }
+    }
+  } ~
+  pathPrefix("agents" / "me") {
+    pathEnd {
+      authenticate(validateAgent) { agent =>
+        get {
+          respondWithMediaType(`application/json`) {
+            complete {
+              agentToJValue(agent)
             }
           }
         }

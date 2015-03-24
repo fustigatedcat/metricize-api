@@ -6,14 +6,12 @@ import spray.routing.HttpService
 
 trait CustomerController extends HttpService { this: Auth with Json4sSupport =>
 
-  val customerRoutes = pathPrefix("api") {
-    pathPrefix("customers" / "me") {
-      pathEnd {
-        authenticate(validateCustomer) { customer =>
-          respondWithMediaType(`application/json`) {
-            complete {
-              customer
-            }
+  val customerRoutes = pathPrefix("customers" / "me") {
+    pathEnd {
+      authenticate(validateCustomer) { customer =>
+        respondWithMediaType(`application/json`) {
+          complete {
+            customer
           }
         }
       }
