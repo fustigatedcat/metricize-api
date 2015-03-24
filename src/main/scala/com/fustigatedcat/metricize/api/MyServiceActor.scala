@@ -22,6 +22,6 @@ class MyServiceActor extends Actor with HttpService with Auth with Json4sSupport
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
   // or timeout handling
-  def receive = runRoute(customerRoutes ~ agentRoutes ~ statisticRoutes)
+  def receive = runRoute(pathPrefix("api") { customerRoutes ~ agentRoutes ~ statisticRoutes })
 
 }
