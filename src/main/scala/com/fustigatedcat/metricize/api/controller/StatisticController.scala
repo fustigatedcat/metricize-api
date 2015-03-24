@@ -18,11 +18,12 @@ trait StatisticController extends HttpService { this: Auth with Json4sSupport =>
           respondWithMediaType(`application/json`) { ctx =>
             (
               (req \ "status").extractOpt[String],
+              (req \ "startTime").extractOpt[Long],
               (req \ "time").extractOpt[Long],
               (req \ "md5").extractOpt[String],
               (req \ "msg").extractOpt[String]
             ) match {
-              case (Some(_), Some(_), Some(_), Some(_)) => {
+              case (Some(_), Some(_), Some(_), Some(_), Some(_)) => {
                 ActorSystems.inputStatisticProcessor !(agent, req)
                 ctx.complete(StatusCodes.Accepted)
               }
