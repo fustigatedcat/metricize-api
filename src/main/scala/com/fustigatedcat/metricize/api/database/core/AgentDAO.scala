@@ -13,12 +13,18 @@ object AgentDAO {
 
   val mysqlagentconfigs = TableQuery[MYSQLAgentConfigs]
 
+  val postgresagentconfigs = TableQuery[POSTGRESAgentConfigs]
+
   def getAgentByKey(key : String) : Option[Agent] = DB.db.withSession { implicit session =>
     agents.filter(_.agentKey === key.value).firstOption
   }
 
   def getMysqlConfig(id : Long)(implicit session : Session) : Option[MYSQLAgentConfig] = {
     mysqlagentconfigs.filter(_.agentId === id).firstOption
+  }
+
+  def getPostgresConfig(id : Long)(implicit session : Session) : Option[POSTGRESAgentConfig] = {
+    postgresagentconfigs.filter(_.agentId === id).firstOption
   }
 
   def mysqlConfigToJValue(config : Option[MYSQLAgentConfig]) : JValue = config match {
@@ -30,18 +36,31 @@ object AgentDAO {
         ("password" -> mysqlConfig.password) ~
         ("queryString" -> mysqlConfig.queryString) ~
         ("countPer" -> mysqlConfig.countPer) ~
-        ("timeUnit" -> mysqlConfig.timeUnit)
+        ("timeUnit" -> mysqlConfig.timeUnit) ~
+        ("dbName" -> mysqlConfig.dbName)
     }
     case _ => JObject()
   }
 
-  /*def postgresqlConfigToJValue(config : String) : JValue = {
-
-  }*/
+  def postgresConfigToJValue(config : Option[POSTGRESAgentConfig]) : JValue = config match {
+    case Some(postgresConfig) => {
+      ("postgresAgentConfigId" -> postgresConfig.postgresAgentConfigId) ~
+        ("fqdn" -> postgresConfig.fqdn) ~
+        ("port" -> postgresConfig.port) ~
+        ("username" -> postgresConfig.username) ~
+        ("password" -> postgresConfig.password) ~
+        ("queryString" -> postgresConfig.queryString) ~
+        ("countPer" -> postgresConfig.countPer) ~
+        ("timeUnit" -> postgresConfig.timeUnit) ~
+        ("dbName" -> postgresConfig.dbName)
+    }
+    case _ => JObject()
+  }
 
   val agentConfigs : Map[Symbol, (Long, Session) => JValue] = Map(
     'NONE -> ((id, session) => JObject()),
-    'MYSQL -> ((id, session) => mysqlConfigToJValue(getMysqlConfig(id)(session)))
+    'MYSQL -> ((id, session) => mysqlConfigToJValue(getMysqlConfig(id)(session))),
+    'POSTGRES -> ((id, session) => postgresConfigToJValue(getPostgresConfig(id)(session)))
   )
 
   def agentToJValue(agent : Agent) : JValue = DB.db.withSession { implicit session =>
