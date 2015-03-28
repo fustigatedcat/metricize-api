@@ -46,29 +46,20 @@ class InputStatisticProcessor extends Actor {
       val status = (input \ "status").extract[String]
       val startTime = (input \ "startTime").extract[Long]
       val time = (input \ "time").extract[Long]
-      if(MD5Valid_?(orig, (input \ "md5").extract[String])) {
-        ActorSystems.edgeQueue ! CamelMessage(
-          orig,
-          Map(
-            "agent-id" -> agent.id.get,
-            "agent-type" -> agent.agentType.get,
-            "status" -> status,
-            "time" -> time,
-            "startTime" -> startTime
-          )
-        )
+      (if(MD5Valid_?(orig, (input \ "md5").extract[String])) {
+        ActorSystems.edgeQueue
       } else {
-        ActorSystems.invalidEdgeQueue ! CamelMessage(
-          orig,
-          Map(
-            "agent-id" -> agent.id.get,
-            "agent-type" -> agent.agentType.get,
-            "status" -> status,
-            "time" -> time,
-            "startTime" -> startTime
-          )
+        ActorSystems.invalidEdgeQueue
+      }) ! CamelMessage(
+        orig,
+        Map(
+          "agent-id" -> agent.id.get,
+          "agent-type" -> agent.agentType.get,
+          "status" -> status,
+          "time" -> time,
+          "startTime" -> startTime
         )
-      }
+      )
     }
     case _ => println("Invalid statistic")
   }

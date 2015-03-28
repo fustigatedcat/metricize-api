@@ -35,6 +35,10 @@ object AgentDAO {
     case _ => JObject()
   }
 
+  /*def postgresqlConfigToJValue(config : String) : JValue = {
+
+  }*/
+
   val agentConfigs : Map[Symbol, (Long, Session) => JValue] = Map(
     'NONE -> ((id, session) => JObject()),
     'MYSQL -> ((id, session) => mysqlConfigToJValue(getMysqlConfig(id)(session)))
