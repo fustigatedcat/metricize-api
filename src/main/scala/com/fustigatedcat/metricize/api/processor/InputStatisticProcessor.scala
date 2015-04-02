@@ -57,7 +57,7 @@ class InputStatisticProcessor extends Actor {
           "agent-type" -> agent.agentType.get,
           "status" -> status,
           "time" -> time,
-          "startTime" -> startTime
+          "start-time" -> startTime
         )
       )
     }
